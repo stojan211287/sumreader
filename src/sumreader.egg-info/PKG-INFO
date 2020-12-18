@@ -1,0 +1,33 @@
+Metadata-Version: 1.2
+Name: sumreader
+Version: 0.0.post0.dev1+ge6c62d5.dirty
+Summary: Add a short description here!
+Home-page: https://github.com/pyscaffold/pyscaffold/
+Author: stojan211287
+Author-email: whyisepsilonneverlessthanzero@gmail.com
+License: mit
+Project-URL: Documentation, https://pyscaffold.org/
+Description-Content-Type: text/x-rst; charset=UTF-8
+Description: =========
+        sumreader
+        =========
+        
+        
+        Add a short description here!
+        
+        
+        Description
+        ===========
+        
+        A longer description of your project goes here...
+        
+        
+        Note
+        ====
+        
+        This project has been set up using PyScaffold 3.2.3. For details and usage
+        information on PyScaffold see https://pyscaffold.org/.
+        
+Platform: any
+Classifier: Development Status :: 4 - Beta
+Classifier: Programming Language :: Python

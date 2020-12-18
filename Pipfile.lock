@@ -1,0 +1,25 @@
+{
+    "_meta": {
+        "hash": {
+            "sha256": "9c3d0691ea705ae88b02ccb86884febe828cc49d7fca4cb2b59a28d93da56f8f"
+        },
+        "pipfile-spec": 6,
+        "requires": {
+            "python_version": "3.8"
+        },
+        "sources": [
+            {
+                "name": "pypi",
+                "url": "https://pypi.org/simple",
+                "verify_ssl": true
+            }
+        ]
+    },
+    "default": {
+        "sumreader": {
+            "path": ".",
+            "version": "==0.0.post0.dev1+ge6c62d5.dirty"
+        }
+    },
+    "develop": {}
+}
