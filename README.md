@@ -5,5 +5,5 @@
 The lib `reader` is meant to be run as a module. Simply do
 
 ```bash
-python3 -m reader
+pipenv run python -m sumreader
 ```
