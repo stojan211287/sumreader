@@ -1,8 +1,9 @@
-from typing import Callable, Type, Any, Optional
+from typing import Any, Callable, Optional, Type
+
+import pandas as pd
 
 from .results import Report
 
-import pandas as pd
 
 # Scala sig is Summary[C, A] - Dataset is of type C, and Summary returns type A
 class Summary:
