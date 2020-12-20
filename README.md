@@ -2,8 +2,8 @@
 
 ## How to run
 
-The lib `reader` is meant to be run as a module. Simply do
+The lib `sumreader` is meant to be run as a module. Simply do
 
 ```bash
-pipenv run python -m sumreader
+pipenv install && pipenv run python -m sumreader
 ```
