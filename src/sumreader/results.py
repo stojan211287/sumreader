@@ -1,50 +1,33 @@
 import os
+from typing import Dict, Optional
+
 import pandas as pd
+import termtables as tt
 
 
-class Dataset:
-    def __init__(self):
-        raise NotImplementedError
+class Report:
+    def __init__(self, dataset: pd.DataFrame, results: Optional[Dict] = None):
 
-    def __repr__(self):
-        raise NotImplementedError
+        self.dataset = dataset
 
+        if results is None:
+            self.results = dict()
+        else:
+            self.results = results
 
-class CSVDataset(Dataset):
-    def __init__(self, path: str):
-        self._path = path
-        self._data = pd.read_csv(self._path)
-
-    def __repr__(self):
-        return str(self._data)
-
-
-class Summary:
-    def __init__(self, config: dict):
-
-        self._validate(config)
-        self.config = config
-
-        self._results = set()
-
-        self._summarise()
-
-    def _validate(self, config: dict):
-        try:
-            for key in {"data"}:
-                config[key]
-        except KeyError:
-            raise ValueError(f"A config must have the {key} key!")
-
-    def _summarise(self):
-        self._mean(column="height")
-
-    def _mean(self, column: str) -> str:
-        self._results.add(
-            str(
-                f"Mean of column {column} is {self.config['data'][[column]].mean()[column]}"
-            )
-        )
-
-    def __repr__(self):
-        return os.linesep.join(self._results)
+    def render(self):
+        for result_name, result_content in self.results.items():
+            print(os.linesep)
+            print(result_name)
+            if hasattr(result_content, "show"):
+                result_content.show()
+            elif isinstance(result_content, pd.DataFrame):
+                tt.print(
+                    result_content.values.tolist(),
+                    header=result_content.columns.values.tolist(),
+                    style=tt.styles.markdown,
+                    padding=(0, 1),
+                    alignment="lcr",
+                )
+            else:
+                raise ValueError(f"Unsupported result of type {type(result_content)}")
