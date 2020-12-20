@@ -3,45 +3,26 @@ from functools import partial
 from .monad import Reader
 from .results import Summary
 
+import pandas as pd
 import argparse
 
+
 def main(args: argparse.Namespace) -> None:
+    def add_to_height(how_much: int, summary: "Summary"):
+        data = summary.config["data"]
+        new_data = data.assign(height=data.height + how_much)
+        return Reader(run=lambda config: Summary(config={"data": new_data}))
 
-    def add_value(extra: int, summary: "Summary"):
-        new_config = {
-            "message": summary.config["message"],
-            "value": summary.config["value"] + extra,
-        }
-        return Reader(run=lambda config: Summary(config=new_config))
+    pipeline = Reader() >> partial(add_to_height, 20)
 
-
-    def multiply_value(multiple: int, summary: "Summary"):
-        new_config = {
-            "message": summary.config["message"],
-            "value": summary.config["value"] * multiple,
-        }
-        return Reader(run=lambda config: Summary(config=new_config))
-
-
-    first_reader = Reader(run=lambda config: Summary(config=config))
-
-    compo_reader = (
-        first_reader
-        >> partial(add_value, 5)
-        >> partial(add_value, 3)
-        >> partial(multiply_value, 4)
-    )
-
-    print(compo_reader(config=config))
-
+    start_config = {"data": pd.read_csv(args.path)}
+    print(pipeline(config=start_config))
 
 
 if __name__ == "__main__":
 
-    DEFAULT_CONFIG = config = {"message": "Test config", "value": 1}
-
     parser = argparse.ArgumentParser()
-    parser.add_argument("-i", "--input", default=DEFAULT_CONFIG, type=str)
+    parser.add_argument("-p", "--path", default="./tests/data.csv", type=str)
 
     args = parser.parse_args()
 
