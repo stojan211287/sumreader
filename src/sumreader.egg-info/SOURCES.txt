@@ -3,8 +3,9 @@
 AUTHORS.rst
 CHANGELOG.rst
 LICENSE.txt
-README.rst
-requirements.txt
+Pipfile
+Pipfile.lock
+README.md
 setup.cfg
 setup.py
 docs/Makefile
@@ -14,12 +15,10 @@ docs/conf.py
 docs/index.rst
 docs/license.rst
 docs/_static/.gitignore
-src/reader/__init__.py
-src/reader/__main__.py
-src/reader/monad.py
-src/reader/results.py
 src/sumreader/__init__.py
-src/sumreader/skeleton.py
+src/sumreader/__main__.py
+src/sumreader/monad.py
+src/sumreader/results.py
 src/sumreader.egg-info/PKG-INFO
 src/sumreader.egg-info/SOURCES.txt
 src/sumreader.egg-info/dependency_links.txt

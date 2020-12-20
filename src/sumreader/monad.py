@@ -1,5 +1,7 @@
 from typing import Callable, Type, Any, Optional
 
+from .results import Summary
+
 # Scala sig is Reader[C, A] - config is of type C, and Reader returns type A
 class Reader:
 
@@ -8,7 +10,7 @@ class Reader:
         if run:
             self._run = run
         else:
-            self._run = lambda config: Summary(config={"message": "Hello", "value": 0})
+            self._run = lambda config: Summary(config=config)
 
     def __call__(self, *args, **kwargs):
         return self._run(*args, **kwargs)
