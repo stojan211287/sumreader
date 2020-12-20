@@ -5,8 +5,9 @@ name = "pypi"
 
 [packages]
 sumreader = {path = "."}
+pandas = "==1.15"
 
 [dev-packages]
 
 [requires]
-python_version = "3.8"
+python_version = "3"
