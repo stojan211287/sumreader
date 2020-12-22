@@ -1,38 +1,27 @@
 import argparse
 from functools import partial
 
-import numpy as np
-import pandas as pd
-import termplotlib as tpl
-import termtables as tt
-
 from .monad import Summary
-from .results import Report, TestDataset
+from .results import PandasDataset, Schema
+from .summaries import show_data, histogram_of_height
 
 
 def main(args: argparse.Namespace) -> None:
-    def histogram_of_height(bins: int, report: "Report") -> "Summary":
-        counts, bin_edges = np.histogram(report.dataset.person_height, bins=bins)
 
-        fig = tpl.figure()
-        fig.hist(counts, bin_edges, orientation="horizontal", force_ascii=False)
+    # define test dataset schema
+    class TestSchema(Schema):
+        unique_id = "id"
+        person_name = "name"
+        person_height = "height"
 
-        report.results.update({f"Histogram of `height` - {bins} bins": fig})
-        new_report_args = {"dataset": report.dataset, "results": report.results}
-
-        return Summary(run=lambda dataset: Report(**new_report_args))
-
-    def show_data(report: "Report") -> "Summary":
-        report.results.update({f"Dataset in question: ": report.dataset})
-        new_report_args = {"dataset": report.dataset, "results": report.results}
-
-        return Summary(run=lambda dataset: Report(**new_report_args))
-
+    # define custom summary function by currying
     height_hist_3_bins = partial(histogram_of_height, 3)
 
+    # define summary pipeline
     summary_pipeline = Summary() >> show_data >> height_hist_3_bins
 
-    summary_pipeline(dataset=TestDataset().get(args.path)).render()
+    # run summary pipeline with test dataset
+    summary_pipeline << PandasDataset(schema=TestSchema).get(args.path)
 
 
 if __name__ == "__main__":

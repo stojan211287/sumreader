@@ -7,7 +7,7 @@ import termtables as tt
 from enum import Enum
 
 
-class Column(Enum):
+class Schema(Enum):
     pass
 
 class Dataset:
@@ -16,8 +16,16 @@ class Dataset:
         raise NotImplementedError
 
 
-class PandasDataset(Dataset):        
+class PandasDataset(Dataset):   
 
+    def __init__(self, schema: 'Schema'):
+
+        self._columns = (column for column in schema)
+
+        for column in self._columns:
+            setattr(self, column.name, column.value)     
+
+    # when loading dataset, replace name attributes with values from real data
     def get(self, path: str) -> 'PandasDataset':
         data = pd.read_csv(path, index_col=0).reset_index()
         for attr_name, attr_value in self.__dict__.items():
@@ -25,22 +33,7 @@ class PandasDataset(Dataset):
                 setattr(self, attr_name, data[attr_value].values)
         return self
 
-
-class TestDataset(PandasDataset):
-
-    def __init__(self):
-
-        class TestDatasetColumn(Column):
-            unique_id = "id"
-            person_name = "name"
-            person_height = "height"
-
-        self._columns = (column for column in TestDatasetColumn)
-
-        for column in self._columns:
-            setattr(self, column.name, column.value)
-
-
+    
 class Report:
     def __init__(self, dataset: pd.DataFrame, results: Optional[Dict] = None):
 

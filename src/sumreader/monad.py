@@ -1,22 +1,20 @@
 from typing import Any, Callable, Optional, Type
 
-import pandas as pd
-
 from .results import Report
+from .results import Dataset
 
 
 # Scala sig is Summary[C, A] - Dataset is of type C, and Summary returns type A
 class Summary:
-
     # Summary is initialized with a function run: Dataset => Report
-    def __init__(self, run: Optional[Callable[[pd.DataFrame], "Report"]] = None):
+    def __init__(self, run: Optional[Callable[['Dataset'], "Report"]] = None):
         if run:
             self._run = run
         else:
             self._run = lambda dataset: Report(dataset=dataset)
 
     def __call__(self, *args, **kwargs):
-        return self._run(*args, **kwargs)
+        return self._run(*args, **kwargs).render()
 
     # Scala sig is def map(f: A => B): Summary[C, B]
     def map(self, f: Callable[["Report"], "Report"]) -> "Summary":
@@ -35,3 +33,6 @@ class Summary:
 
     def __rshift__(self, f: Callable[["Report"], "Summary"]) -> "Summary":
         return self.flatMap(f=f)
+
+    def __lshift__(self, *args, **kwargs):
+        return self.__call__(*args, **kwargs)
