@@ -16,7 +16,6 @@ class PlanetDatasetSchema(Schema):
 # define custom summary function by currying
 mass_hist_20_bins = partial(histogram_of_mass, 20)
 
-
 def run(data_url: str) -> None:
 
     # define summary pipeline
