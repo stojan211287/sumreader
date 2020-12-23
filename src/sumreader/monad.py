@@ -1,13 +1,12 @@
 from typing import Any, Callable, Optional, Type
 
-from .results import Report
-from .results import Dataset
+from .results import Dataset, Report
 
 
 # Scala sig is Summary[C, A] - Dataset is of type C, and Summary returns type A
 class Summary:
     # Summary is initialized with a function run: Dataset => Report
-    def __init__(self, run: Optional[Callable[['Dataset'], "Report"]] = None):
+    def __init__(self, run: Optional[Callable[["Dataset"], "Report"]] = None):
         if run:
             self._run = run
         else:

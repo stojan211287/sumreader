@@ -1,8 +1,10 @@
+from functools import partial
+
+from examples.planets.summaries import (boxplot_of_planet_distance,
+                                        histogram_of_mass)
 from src.sumreader.monad import Summary
 from src.sumreader.results import PandasDataset, Schema
-from examples.planets.summaries import histogram_of_mass, boxplot_of_planet_distance
 
-from functools import partial
 
 # define dataset schema
 class PlanetDatasetSchema(Schema):
@@ -13,8 +15,10 @@ class PlanetDatasetSchema(Schema):
     planet_distance = "distance"
     year = "year"
 
+
 # define custom summary function by currying
 mass_hist_20_bins = partial(histogram_of_mass, 20)
+
 
 def run(data_url: str) -> None:
 
