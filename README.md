@@ -40,7 +40,7 @@ def run(data_url: str) -> None:
 
 ## How to run
 
-The lib `sumreader` is meant to be run as a module. To run an example summary on the `Planets` dataset from [here](https://raw.githubusercontent.com/mwaskom/seaborn-data/master/), simply do
+The lib `sumreader` is meant to be run as a module. To run an example summary on the `Planets` dataset from [here](https://github.com/mwaskom/seaborn-data), simply do
 
 ```bash
 pipenv install && pipenv run python -m examples.planets
