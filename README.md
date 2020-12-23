@@ -20,17 +20,17 @@ class PlanetDatasetSchema(Schema):
 
 ### Step 2 - Define summary pipeline
 
-```python 
+```python
 from src.sumreader.monad import Summary
 from src.sumreader.results import PandasDataset
 
 from examples.planets.summaries import histogram_of_mass, boxplot_of_planet_distance
 
 # define custom summary function by currying
+from functools import partial
 mass_hist_20_bins = partial(histogram_of_mass, 20)
 
 def run(data_url: str) -> None:
-
     # define summary pipeline
     summary_pipeline = Summary() >> mass_hist_20_bins >> boxplot_of_planet_distance
 
