@@ -2,9 +2,13 @@ import os
 from typing import Dict, Optional
 
 import pandas as pd
-import termtables as tt
+from matplotlib import pyplot as plt 
 
 from enum import Enum
+
+import io
+import requests
+import warnings
 
 
 class Schema(Enum):
@@ -23,19 +27,25 @@ class PandasDataset(Dataset):
         self._columns = (column for column in schema)
 
         for column in self._columns:
-            setattr(self, column.name, column.value)     
+            setattr(self, column.name, column.value)    
 
     # when loading dataset, replace name attributes with values from real data
-    def get(self, path: str) -> 'PandasDataset':
-        data = pd.read_csv(path, index_col=0).reset_index()
+    def get(self, url: str) -> 'PandasDataset':
+        # read csv from url
+        data = pd.read_csv(io.StringIO(requests.get(url).content.decode('utf-8')))
+
+        # replace Dataset attributes with column values
         for attr_name, attr_value in self.__dict__.items():
             if attr_value in data.columns:
                 setattr(self, attr_name, data[attr_value].values)
+            else:
+                warnings.warn(f"{attr_value} (value of {attr_name} not found in columns of dataset at {url} - skipping")
+
         return self
 
     
 class Report:
-    def __init__(self, dataset: pd.DataFrame, results: Optional[Dict] = None):
+    def __init__(self, dataset: Dataset, results: Optional[Dict] = None):
 
         self.dataset = dataset
 
@@ -45,15 +55,13 @@ class Report:
             self.results = results
 
     def render(self):
+
+        # ensure results dis
+        res_path = os.path.join(os.getcwd(), "results")
+        os.makedirs(res_path, exist_ok=True)
+
         for result_name, result_content in self.results.items():
-            print(os.linesep)
-            print(result_name)
-            if hasattr(result_content, "show"):
-                result_content.show()
-            elif isinstance(result_content, Dataset):
-                for name, vals in result_content.__dict__.items():
-                    if not name.startswith("_"):
-                        print(name)
-                        print(vals)
+            if isinstance(result_content, plt.Figure):
+                result_content.savefig(os.path.join(res_path, f"./{result_name}.png"))
             else:
                 raise ValueError(f"Unsupported result of type {type(result_content)}")
