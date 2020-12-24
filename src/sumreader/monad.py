@@ -3,14 +3,14 @@ from typing import Any, Callable, Optional, Type
 from .results import Dataset, Report
 
 
-# Scala sig is Summary[C, A] - Dataset is of type C, and Summary returns type A
+# Scala sig is Summary[C, A] - Dataset is type C, the Report represents type A, and Summary[C, A] is the higher-order monadic type
 class Summary:
     # Summary is initialized with a function run: Dataset => Report
     def __init__(self, run: Optional[Callable[["Dataset"], "Report"]] = None):
         if run:
             self._run = run
         else:
-            self._run = lambda dataset: Report(dataset=dataset)
+            self._run = lambda dataset: Report()
 
     def __call__(self, *args, **kwargs):
         return self._run(*args, **kwargs).render()
