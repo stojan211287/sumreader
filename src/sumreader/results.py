@@ -15,10 +15,7 @@ class Report:
             self.results = results
 
     def add(self, **results_to_wrap):
-
-        for result_name, result in results_to_wrap.items():
-            self.results.update({result_name: result})
-
+        self.results.update(results_to_wrap)
         return self
 
     def render(self):
