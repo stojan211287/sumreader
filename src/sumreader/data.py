@@ -23,9 +23,7 @@ class Dataset:
 class PandasDataset(Dataset):
     def __init__(self, schema: "Schema"):
 
-        self._columns = (column for column in schema)
-
-        for column in self._columns:
+        for column in schema:
             setattr(self, column.name, column.value)
 
     # when loading dataset, replace name attributes with values from real data
