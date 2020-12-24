@@ -2,8 +2,6 @@
 
 ## Sample API
 
-For an example look into `./examples/planets/pipeline.py` (pipeline def) and `./examples/planets/summaries.py` (custom summary defs).
-
 ### Step 1 - Define data schema  - `examples.planets.pipeline`
 ```python
 from src.sumreader.data import Schema
