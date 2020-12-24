@@ -7,7 +7,7 @@ For an example look into `./examples/planets/pipeline.py` (pipeline def) and `./
 ### Step 1 - Define data schema 
 
 ```python
-from src.sumreader.results import Schema
+from src.sumreader.data import Schema
 
 class PlanetDatasetSchema(Schema):
     method = "method"
@@ -22,17 +22,27 @@ class PlanetDatasetSchema(Schema):
 
 ```python
 from src.sumreader.monad import Summary
-from src.sumreader.results import PandasDataset
+from src.sumreader.data import PandasDataset
 
-from examples.planets.summaries import histogram_of_mass, boxplot_of_planet_distance
+from examples.planets.summaries import (
+    boxplot_of_planet_distance,
+    histogram_of_mass,
+    scatter_mass_w_distance,
+)
 
 # define custom summary function by currying
 from functools import partial
 mass_hist_20_bins = partial(histogram_of_mass, 20)
 
 def run(data_url: str) -> None:
+
     # define summary pipeline
-    summary_pipeline = Summary() >> mass_hist_20_bins >> boxplot_of_planet_distance
+    summary_pipeline = (
+        Summary()
+        >> mass_hist_20_bins
+        >> boxplot_of_planet_distance
+        >> scatter_mass_w_distance
+    )
 
     # run summary pipeline with planets dataset
     summary_pipeline << PandasDataset(schema=PlanetDatasetSchema).get(data_url)
