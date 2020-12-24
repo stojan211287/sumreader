@@ -20,7 +20,7 @@ class Report:
 
     def render(self):
 
-        # ensure results dis
+        # ensure results dir
         res_path = os.path.join(os.getcwd(), "results")
         os.makedirs(res_path, exist_ok=True)
 

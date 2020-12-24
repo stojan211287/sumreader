@@ -7,17 +7,17 @@ from src.sumreader.data import Dataset
 from src.sumreader.results import Report
 
 
-def histogram_of_mass(bins: int, report: "Report") -> "Summary":
+def histogram_of_mass(report: "Report") -> "Summary":
     def new_run(dataset: Dataset) -> "Report":
 
         non_na_planet_mass = list(filter(lambda v: v == v, dataset.planet_mass))
 
-        counts, bin_edges = np.histogram(non_na_planet_mass, bins=bins)
+        counts, bin_edges = np.histogram(non_na_planet_mass, bins=20)
 
         fig, ax = plt.subplots()
         sns.histplot(x=counts, bins=bin_edges, ax=ax)
 
-        ax.set_title(f"Histogram of planet mass - using {bins} bins")
+        ax.set_title(f"Histogram of planet mass - using 20 bins")
 
         return report.add(planet_mass_hist=fig)
 
