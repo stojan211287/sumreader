@@ -16,6 +16,9 @@ class Dataset:
     def __init__(self):
         raise NotImplementedError
 
+    def get(self, url: str) -> "Dataset":
+        raise NotImplementedError
+
 
 class PandasDataset(Dataset):
     def __init__(self, schema: "Schema"):
