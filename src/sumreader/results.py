@@ -9,8 +9,6 @@ from .data import Dataset
 class Report:
     def __init__(self, results: Optional[Dict] = None):
 
-        # self.dataset = dataset
-
         if results is None:
             self.results = dict()
         else:
