@@ -58,3 +58,36 @@ To run an example summary on the `Planets` dataset from [here](https://github.co
 ```bash
 pipenv install && pipenv run python -m examples.planets
 ```
+
+## Adding summaries
+Summary functions for constructing the pipeline are in `./src/sumreader/summaries.py`
+
+### Example - histogram of non-NA values
+
+```python
+@Summary._boilerplate_me
+def histogram_plot(
+    dataset: "Dataset", column: str, title: str, bins: int
+) -> plt.Figure:
+    non_na_values = list(filter(lambda v: v == v, getattr(dataset, column)))
+
+    counts, bin_edges = np.histogram(non_na_values, bins=bins)
+
+    fig, ax = plt.subplots()
+    sns.histplot(x=counts, bins=bin_edges, ax=ax)
+
+    ax.set_title(title)
+
+    return fig
+```
+
+The `Summary` monadic abstraction has a `_boilerplate_me` static method. 
+
+All the method does is convert a "summarization function" with signature
+```python
+(Dataset, **kwargs) => plt.Figure
+``` 
+into a function that is easily composable with the `Summary` monad, i.e. with signature
+```python
+(Dataset) => Report
+```
