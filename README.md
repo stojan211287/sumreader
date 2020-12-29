@@ -89,5 +89,5 @@ All the method does is convert a "summarization function" with signature
 ``` 
 into a function that is easily composable with the `Summary` monad, i.e. with signature
 ```python
-(Dataset) => Report
+(Report) => Summary
 ```
