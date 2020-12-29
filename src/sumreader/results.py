@@ -18,10 +18,10 @@ class Report:
         self.results.update(results_to_wrap)
         return self
 
-    def render(self):
+    def render(self, into: str):
 
         # ensure results dir
-        res_path = os.path.join(os.getcwd(), "results")
+        res_path = os.path.join(os.getcwd(), into)
         os.makedirs(res_path, exist_ok=True)
 
         for result_name, result_content in self.results.items():
