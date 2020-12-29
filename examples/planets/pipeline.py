@@ -5,7 +5,7 @@ from src.sumreader.data import PandasDataset, Schema
 # define dataset schema
 # class attributes are `standardised` column names
 # class attribute values are column names, expect to be present in dataset instance
-class PlanetDatasetSchema(Schema):
+class Planets(Schema):
     method = "method"
     number = "number"
     orbital_period = "orbital_period"

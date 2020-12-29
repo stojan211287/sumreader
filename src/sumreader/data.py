@@ -13,7 +13,7 @@ class Schema(Enum):
 
 
 class Dataset:
-    def __init__(self):
+    def __init__(self, schema: "Schema"):
         raise NotImplementedError
 
     def get(self, url: str) -> "Dataset":
@@ -22,6 +22,8 @@ class Dataset:
 
 class PandasDataset(Dataset):
     def __init__(self, schema: "Schema"):
+
+        self._schema = schema
 
         for column in schema:
             setattr(self, column.name, column.value)
@@ -35,6 +37,8 @@ class PandasDataset(Dataset):
         for attr_name, attr_value in self.__dict__.items():
             if attr_value in data.columns:
                 setattr(self, attr_name, data[attr_value].values)
+            elif attr_name.startswith("_"):
+                pass
             else:
                 warnings.warn(
                     f"{attr_value} (value of {attr_name} not found in columns of dataset at {url} - skipping"

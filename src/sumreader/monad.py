@@ -33,8 +33,8 @@ class Summary:
         else:
             self._run = lambda dataset: Report()
 
-    def __call__(self, *args, **kwargs):
-        return self._run(*args, **kwargs).render()
+    def __call__(self, dataset: "Dataset"):
+        return self._run(dataset).render(into=dataset._schema.__name__)
 
     # Scala sig is def map(f: A => B): Summary[C, B]
     def map(self, f: Callable[["Report"], "Report"]) -> "Summary":
@@ -54,5 +54,5 @@ class Summary:
     def __rshift__(self, f: Callable[["Report"], "Summary"]) -> "Summary":
         return self.flatMap(f=f)
 
-    def __lshift__(self, *args, **kwargs):
-        return self.__call__(*args, **kwargs)
+    def __lshift__(self, dataset: "Dataset"):
+        return self.__call__(dataset)
