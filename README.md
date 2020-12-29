@@ -6,7 +6,6 @@
 ```python
 from src.sumreader.data import Schema
 
-# define dataset schema
 # class attributes are `standardised` column names
 # class attribute values are column names, expect to be present in dataset instance
 class Planets(Schema):
