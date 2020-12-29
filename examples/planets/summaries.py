@@ -7,6 +7,20 @@ from src.sumreader.data import Dataset
 from src.sumreader.results import Report
 
 
+@Summary._boilerplate_b_gone
+def histogram_plot(dataset: "Dataset", column: str, title: str, bins: int) -> plt.Figure:
+
+    non_na_values = list(filter(lambda v: v == v, getattr(dataset, column)))
+
+    counts, bin_edges = np.histogram(non_na_values, bins=bins)
+
+    fig, ax = plt.subplots()
+    sns.histplot(x=counts, bins=bin_edges, ax=ax)
+
+    ax.set_title(title)
+
+    return fig 
+
 def histogram_of_mass(report: "Report") -> "Summary":
     def new_run(dataset: Dataset) -> "Report":
 
