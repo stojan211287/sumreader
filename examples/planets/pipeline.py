@@ -1,6 +1,11 @@
-from src.sumreader.summaries import log_boxplot, histogram_plot, scatter_two
+import numpy as np
+import seaborn as sns
+
+from matplotlib import pyplot as plt
+from functools import partial
+
 from src.sumreader.monad import Summary
-from src.sumreader.data import PandasDataset, Schema
+from src.sumreader.data import CSVDataset, Schema
 
 # define dataset schema
 # class attributes are `standardised` column names
@@ -14,18 +19,34 @@ class Planets(Schema):
     year = "year"
 
 
+# define summary functions
+# with signature (Dataset, **kwargs) => matplotlib.pyplot.Figure
+def non_na_histogram_planet_mass(dataset: "Dataset") -> plt.Figure:
+    non_na_values = list(filter(lambda v: v == v, dataset.planet_mass))
+
+    counts, bin_edges = np.histogram(non_na_values, bins=20)
+
+    fig, ax = plt.subplots()
+    sns.histplot(x=counts, bins=bin_edges, ax=ax)
+
+    ax.set_title("Histogram of non-NA planet masses")
+
+    return fig
+
+
+def log_boxplot_planet_distance(dataset: "Dataset") -> plt.Figure:
+    fig, ax = plt.subplots()
+    sns.boxplot(x=dataset.planet_distance, ax=ax)
+
+    ax.set_xlabel("Planet distances")
+    ax.set_title("Boxplot of log of planet distances")
+
+    ax.set_xscale("log")
+
+    return fig
+
+
 # define summary pipeline
 # ONLY defines the `recipe` for data summary
 # no execution will happen until a dataset instance has been passed
-pipeline = (
-    Summary()
-    >> histogram_plot.but(
-        title="Histogram of planet masses", bins=20, column="planet_mass"
-    )
-    >> log_boxplot.but(title="Boxplot of planet distances", column="planet_distance")
-    >> scatter_two.but(
-        title="Scatterplot of planet_distances vs planet mass",
-        x="planet_distance",
-        y="planet_mass",
-    )
-)
+pipeline = Summary() >> non_na_histogram_planet_mass >> log_boxplot_planet_distance

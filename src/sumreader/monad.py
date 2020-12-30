@@ -1,6 +1,7 @@
 from typing import Any, Callable, Optional, Type
 from functools import partial
-from .results import Dataset, Report
+from .output import Report
+from .data import Dataset
 
 from matplotlib import pyplot as plt
 
@@ -16,12 +17,6 @@ class Summary:
 
             # emit a new Summary with the run function `data_to_report` that returns the newly-contstructed report in the previous line
             return Summary(run=data_to_report)
-
-        # add partial app convenience method to `report_to_summary_func`
-        def _will_be(**kwargs):
-            return partial(report_to_summary_func, **kwargs)
-
-        setattr(report_to_summary_func, "but", _will_be)
 
         # return modified function - NOW WITH BOILERPLATE
         return report_to_summary_func
@@ -51,7 +46,11 @@ class Summary:
         new_run_function = lambda dataset: f(self._run(dataset))._run(dataset)
         return Summary(run=new_run_function)
 
-    def __rshift__(self, f: Callable[["Report"], "Summary"]) -> "Summary":
+    def __rshift__(self, f: Callable[["Dataset"], Any]) -> "Summary":
+        # add boilerplate to user-defined function
+        # make its sig (Report) => Summary
+        # and the apply flatMap
+        f = Summary._boilerplate_me(f)
         return self.flatMap(f=f)
 
     def __lshift__(self, dataset: "Dataset"):
