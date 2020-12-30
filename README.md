@@ -17,36 +17,52 @@ class Planets(Schema):
     year = "year"
 ```
 
-### Step 2 - Define summary pipeline - `examples.planets.pipeline`
+### Step 2 - Define summary functions - `examples.planets.pipeline`
+
+```python
+# anything with signature e.g. (Dataset, **kwargs) => matplotlib.pyplot.Figure
+def non_na_histogram_planet_mass(dataset: "Dataset") -> plt.Figure:
+    non_na_values = list(filter(lambda v: v == v, dataset.planet_mass))
+
+    counts, bin_edges = np.histogram(non_na_values, bins=20)
+
+    fig, ax = plt.subplots()
+    sns.histplot(x=counts, bins=bin_edges, ax=ax)
+
+    ax.set_title("Histogram of non-NA planet masses")
+
+    return fig
+
+def log_boxplot_planet_distance(dataset: "Dataset") -> plt.Figure:
+    fig, ax = plt.subplots()
+    sns.boxplot(x=dataset.planet_distance, ax=ax)
+
+    ax.set_xlabel("Planet distances")
+    ax.set_title("Boxplot of log of planet distances")
+
+    ax.set_xscale("log")
+
+    return fig
+```
+
+### Step 3 - Construct pipeline recipe - `examples.planets.pipeline`
 ```python
 from src.sumreader.monad import Summary
-from src.sumreader.summaries import log_boxplot, histogram_plot, scatter_two
 
 # ONLY defines the `recipe` for data summary
 # no execution will happen until a dataset instance has been passed
-pipeline = (
-    Summary()
-    >> histogram_plot.but(
-        title="Histogram of planet masses", bins=20, column="planet_mass"
-    )
-    >> log_boxplot.but(title="Boxplot of planet distances", column="planet_distance")
-    >> scatter_two.but(
-        title="Scatterplot of planet_distances vs planet mass",
-        x="planet_distance",
-        y="planet_mass",
-    )
-)
+pipeline = Summary() >> non_na_histogram_planet_mass >> log_boxplot_planet_distance
 ```
 
-### Step 3 - Run pipeline with particular dataset instance - `examples.planets.__main__`
+### Step 4 - Run pipeline with particular dataset instance - `examples.planets.__main__`
 ```python
-from src.sumreader.data import PandasDataset
+from src.sumreader.data import CSVDataset
 from examples.planets.pipeline import pipeline, Planets
 
 # run summary pipeline with planets dataset
 # results will be found in a folder with the same name as the schema name
 # in our case, `Planets`
-pipeline << PandasDataset(schema=Planets).get(
+pipeline << CSVDataset(schema=Planets).get(
     "https://raw.githubusercontent.com/mwaskom/seaborn-data/master/planets.csv"
 )
 ```
@@ -56,37 +72,4 @@ To run an example summary on the `Planets` dataset from [here](https://github.co
 
 ```bash
 pipenv install && pipenv run python -m examples.planets
-```
-
-## Adding summaries
-Summary functions for constructing the pipeline are in `./src/sumreader/summaries.py`
-
-### Example - histogram of non-NA values
-
-```python
-@Summary._boilerplate_me
-def histogram_plot(
-    dataset: "Dataset", column: str, title: str, bins: int
-) -> plt.Figure:
-    non_na_values = list(filter(lambda v: v == v, getattr(dataset, column)))
-
-    counts, bin_edges = np.histogram(non_na_values, bins=bins)
-
-    fig, ax = plt.subplots()
-    sns.histplot(x=counts, bins=bin_edges, ax=ax)
-
-    ax.set_title(title)
-
-    return fig
-```
-
-The `Summary` monadic abstraction has a `_boilerplate_me` static method. 
-
-All the method does is convert a "summarization function" with signature
-```python
-(Dataset, **kwargs) => plt.Figure
-``` 
-into a function that is easily composable with the `Summary` monad, i.e. with signature
-```python
-(Report) => Summary
 ```

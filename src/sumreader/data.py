@@ -20,7 +20,7 @@ class Dataset:
         raise NotImplementedError
 
 
-class PandasDataset(Dataset):
+class CSVDataset(Dataset):
     def __init__(self, schema: "Schema"):
 
         self._schema = schema
@@ -29,7 +29,7 @@ class PandasDataset(Dataset):
             setattr(self, column.name, column.value)
 
     # when loading dataset, replace name attributes with values from real data
-    def get(self, url: str) -> "PandasDataset":
+    def get(self, url: str) -> "CSVDataset":
         # read csv from url
         data = pd.read_csv(io.StringIO(requests.get(url).content.decode("utf-8")))
 
