@@ -21,13 +21,20 @@ class PandasDataframeConfig(Config):
     def __init__(self, url: str) -> "PandasDataframeConfig":
         # read csv from url
         self.sample = pd.read_csv(
-            io.StringIO(requests.get(url).content.decode("utf-8"))
+            io.StringIO(requests.get(url).content.decode("utf-8")),
+            engine="pyarrow",
+            dtype_backend="pyarrow"
         )
 
     def to_mapping(self):
         return dict(
             **{
-                k: str(v)
+                k: v
                 for k, v in self.sample.dtypes.items()
             }
         )
+
+
+import pandas 
+
+pandas.DataFrame.to_sql
