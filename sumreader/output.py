@@ -1,5 +1,6 @@
 from typing import Dict, Optional
 
+
 class SystemCommand:
     def __init__(self, commands: Optional[Dict] = None):
         if commands is None:

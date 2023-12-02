@@ -3,7 +3,12 @@ from sumreader.data import PandasDataframeConfig, Config
 
 from jinja2 import Template
 
-from sumreader.type_mapper import pyarrow2redshift, pyarrow2athena, pyarrow_types_from_pandas
+from sumreader.type_mapper import (
+    pyarrow2redshift,
+    pyarrow2athena,
+    pyarrow_types_from_pandas,
+)
+
 
 def jinja_render(template: str, **kwargs) -> str:
     return Template(template).render(**kwargs)
@@ -30,7 +35,10 @@ def generate_create_table_statement_for_redshift(config: Config) -> str:
     """
 
     raw_mapping = pyarrow_types_from_pandas(df=config.sample, index=False)
-    dest_mapping = {k: pyarrow2redshift(v, string_type="VARCHAR(256)") for k, v in raw_mapping.items()}
+    dest_mapping = {
+        k: pyarrow2redshift(v, string_type="VARCHAR(256)")
+        for k, v in raw_mapping.items()
+    }
 
     return jinja_render(
         template=template,
@@ -38,6 +46,7 @@ def generate_create_table_statement_for_redshift(config: Config) -> str:
         table_name="test",
         table_columns=dest_mapping,
     )
+
 
 def generate_create_table_statement_for_athena(config: Config) -> str:
     template = """
@@ -62,7 +71,12 @@ def generate_create_table_statement_for_athena(config: Config) -> str:
 # define playbook pipeline
 # ONLY defines the `recipe` for cation
 # no execution will happen until a dataset example has been passed
-pipeline = Playbook() >> print_schema >> generate_create_table_statement_for_athena >> generate_create_table_statement_for_redshift
+pipeline = (
+    Playbook()
+    >> print_schema
+    >> generate_create_table_statement_for_athena
+    >> generate_create_table_statement_for_redshift
+)
 
 if __name__ == "__main__":
     pipeline << PandasDataframeConfig(

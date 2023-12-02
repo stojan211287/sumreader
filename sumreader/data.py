@@ -23,18 +23,13 @@ class PandasDataframeConfig(Config):
         self.sample = pd.read_csv(
             io.StringIO(requests.get(url).content.decode("utf-8")),
             engine="pyarrow",
-            dtype_backend="pyarrow"
+            dtype_backend="pyarrow",
         )
 
     def to_mapping(self):
-        return dict(
-            **{
-                k: v
-                for k, v in self.sample.dtypes.items()
-            }
-        )
+        return dict(**{k: v for k, v in self.sample.dtypes.items()})
 
 
-import pandas 
+import pandas
 
 pandas.DataFrame.to_sql
