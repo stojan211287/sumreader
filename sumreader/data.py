@@ -28,8 +28,3 @@ class PandasDataframeConfig(Config):
 
     def to_mapping(self):
         return dict(**{k: v for k, v in self.sample.dtypes.items()})
-
-
-import pandas
-
-pandas.DataFrame.to_sql
