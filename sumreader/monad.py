@@ -4,10 +4,10 @@ from .output import SystemCommand
 from .data import Config
 
 
-# Scala sig is Playbook[C, A] - Config is type C, the SystemCommand represents type A (output of processing COnfig), 
+# Scala sig is Playbook[C, A] - Config is type C, the SystemCommand represents type A (output of processing COnfig),
 # and Playbook[C, A] is the higher-order monadic type
 class Playbook:
-    # Playbook is initialized with a function run: Config => SystemCommand 
+    # Playbook is initialized with a function run: Config => SystemCommand
     def __init__(self, run: Optional[Callable[["Config"], "SystemCommand"]] = None):
         if run:
             self._run = run
@@ -29,7 +29,7 @@ class Playbook:
         # thus, f(self._run(Config)).run(Config) is Config ==> SystemCommand B
         new_run_function = lambda Config: f(self._run(Config))._run(Config)
         return Playbook(run=new_run_function)
-    
+
     def __call__(self, Config: "Config"):
         return self._run(Config).render()
 
@@ -45,12 +45,16 @@ class Playbook:
 
     @staticmethod
     def _boilerplate_me(f: Callable) -> Callable:
-        def systemcommand_to_playbook_run_function(system_command: "SystemCommand", *args, **kwargs) -> "Playbook":
+        def systemcommand_to_playbook_run_function(
+            system_command: "SystemCommand", *args, **kwargs
+        ) -> "Playbook":
             def config_to_system_command(config: Config) -> "SystemCommand":
                 # wrap result of `f` (str or similar) into a SystemCommand
-                return system_command.add(**{f.__name__: f(config=config, *args, **kwargs)})
+                return system_command.add(
+                    **{f.__name__: f(config=config, *args, **kwargs)}
+                )
 
-            # emit a new Playbook with the run function `config_to_system_command` 
+            # emit a new Playbook with the run function `config_to_system_command`
             # that returns the newly-constructed SystemCommand in the previous line
             return Playbook(run=config_to_system_command)
 

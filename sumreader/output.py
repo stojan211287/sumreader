@@ -6,7 +6,6 @@ from .data import PandasDataframeConfig
 
 class SystemCommand:
     def __init__(self, commands: Optional[Dict] = None):
-
         if commands is None:
             self.commands = dict()
         else:
@@ -18,4 +17,4 @@ class SystemCommand:
 
     def render(self):
         for command_name, command_content in self.commands.items():
-            print(f"{command_name} - {command_content}")
+            print(f"{command_name} -\n\n{command_content}")
